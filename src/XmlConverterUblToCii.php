@@ -1128,13 +1128,17 @@ class XmlConverterUblToCii extends XmlConverterBase
      * @param  string|null $dateTimeString
      * @return string
      */
-    private function convertDateTime(?string $dateTimeString): string
+    private function convertDateTime(?string $dateTimeString): ?string
     {
         if (is_null($dateTimeString)) {
             return null;
         }
 
-        $dt = DateTime::createFromFormat("Y-m-d", $dateTimeString);
+        if (preg_match('/^\d{4}-\d{2}-\d{2}[+-]\d{2}:\d{2}$/', $dateTimeString)) {
+            $dt = DateTime::createFromFormat("Y-m-dP", $dateTimeString);
+        } else {
+            $dt = DateTime::createFromFormat("Y-m-d", $dateTimeString);
+        }
 
         if ($dt === false) {
             return null;
